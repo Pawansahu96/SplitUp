@@ -97,7 +97,7 @@ useEffect(() => {
 }, []);
 
   const loadUsers = async () => {
-    const response = await fetch("http://127.0.0.1:5000/users");
+    const response = await fetch("https://splitup-backend-1zos.onrender.com/users");
     const data = await response.json();
 setUsers(data);
   };
@@ -105,7 +105,7 @@ setUsers(data);
 const loadMembers = async () => {
 
   const response = await fetch(
-    "http://127.0.0.1:5000/members"
+    "https://splitup-backend-1zos.onrender.com/members"
   );
 
   const data = await response.json();
@@ -128,7 +128,7 @@ if (!email.includes("@")) {
 }
 
 
-  const response = await fetch("http://127.0.0.1:5000/add-user", {
+  const response = await fetch("https://splitup-backend-1zos.onrender.com/add-user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -159,7 +159,7 @@ const loadLoggedInUser = async () => {
   if (!email) return;
 
   const response = await fetch(
-    `http://127.0.0.1:5000/user-by-email/${email}`
+    `https://splitup-backend-1zos.onrender.com/user-by-email/${email}`
   );
 
   const data = await response.json();
@@ -170,7 +170,7 @@ const loadLoggedInUser = async () => {
 const login = async () => {
 
   const response = await fetch(
-    "http://127.0.0.1:5000/login",
+    "https://splitup-backend-1zos.onrender.com/login",
     {
       method: "POST",
       headers: {
@@ -205,7 +205,7 @@ if (!groupName.trim()) {
   alert("Please enter group name");
   return;
 }
-  const response = await fetch("http://127.0.0.1:5000/create-group", {
+  const response = await fetch("https://splitup-backend-1zos.onrender.com/create-group", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -229,7 +229,7 @@ if (!description.trim() || !amount.trim()) {
   alert("Please enter description and amount");
   return;
 }
-  const response = await fetch("http://127.0.0.1:5000/add-expense", {
+  const response = await fetch("https://splitup-backend-1zos.onrender.com/add-expense", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -260,7 +260,7 @@ const addMember = async () => {
   }
 
   const response = await fetch(
-    "http://127.0.0.1:5000/add-member",
+    "https://splitup-backend-1zos.onrender.com/add-member",
     {
       method: "POST",
       headers: {
@@ -284,27 +284,27 @@ const addMember = async () => {
 };
 
 const loadGroups = async () => {
-  const response = await fetch("http://127.0.0.1:5000/groups");
+  const response = await fetch("https://splitup-backend-1zos.onrender.com/groups");
   const data = await response.json();
   setGroups(data);
 };
 
 
 const loadExpenses = async () => {
-  const response = await fetch("http://127.0.0.1:5000/expenses");
+  const response = await fetch("https://splitup-backend-1zos.onrender.com/expenses");
   const data = await response.json();
   setExpenses(data);
 };
 
 const loadBalance = async () => {
-  const response = await fetch("http://127.0.0.1:5000/balance");
+  const response = await fetch("https://splitup-backend-1zos.onrender.com/balance");
   const data = await response.json();
   setBalance(data);
 };
 
 const loadSettlements = async () => {
   const response = await fetch(
-    "http://127.0.0.1:5000/settlements"
+    "https://splitup-backend-1zos.onrender.com/settlements"
   );
 
   const data = await response.json();
@@ -314,7 +314,7 @@ const loadSettlements = async () => {
 
 const deleteExpense = async (expenseId) => {
   const response = await fetch(
-    `http://127.0.0.1:5000/delete-expense/${expenseId}`,
+    `https://splitup-backend-1zos.onrender.com/delete-expense/${expenseId}`,
     {
       method: "DELETE",
     }
@@ -336,7 +336,7 @@ const updateExpense = async (expenseId) => {
   if (!newDescription || !newAmount) return;
 
   const response = await fetch(
-    `http://127.0.0.1:5000/update-expense/${expenseId}`,
+    `https://splitup-backend-1zos.onrender.com/update-expense/${expenseId}`,
     {
       method: "PUT",
       headers: {
@@ -359,7 +359,7 @@ const updateExpense = async (expenseId) => {
 
 const deleteUser = async (userId) => {
   const response = await fetch(
-    `http://127.0.0.1:5000/delete-user/${userId}`,
+    `https://splitup-backend-1zos.onrender.com/delete-user/${userId}`,
     {
       method: "DELETE",
     }
@@ -381,7 +381,7 @@ const updateUser = async (userId) => {
   if (!newName || !newEmail) return;
 
   const response = await fetch(
-    `http://127.0.0.1:5000/update-user/${userId}`,
+    `https://splitup-backend-1zos.onrender.com/update-user/${userId}`,
     {
       method: "PUT",
       headers: {
@@ -403,7 +403,7 @@ const updateUser = async (userId) => {
 
 const deleteGroup = async (groupId) => {
   const response = await fetch(
-    `http://127.0.0.1:5000/delete-group/${groupId}`,
+    `https://splitup-backend-1zos.onrender.com/delete-group/${groupId}`,
     {
       method: "DELETE",
     }
@@ -423,7 +423,7 @@ const updateGroup = async (groupId) => {
   if (!newGroupName) return;
 
   const response = await fetch(
-    `http://127.0.0.1:5000/update-group/${groupId}`,
+    `https://splitup-backend-1zos.onrender.com/update-group/${groupId}`,
     {
       method: "PUT",
       headers: {
