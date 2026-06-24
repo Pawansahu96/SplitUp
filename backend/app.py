@@ -7,10 +7,11 @@ CORS(app)
 
 # Database Connection
 conn = psycopg2.connect(
-    host="localhost",
+    host="dpg-d8ttkvkm0tmc73fg46hg-a.oregon-postgres.render.com",
     database="splitup",
-    user="postgres",
-    password="Pawan7067"
+    user="splitup_user",
+    password="D1AjW0BdeZNtstgX0fNGo6mL18vgpNeD",
+    port="5432"
 )
 
 @app.route("/")
