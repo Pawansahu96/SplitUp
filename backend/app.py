@@ -560,24 +560,20 @@ def get_settlements():
 @app.route("/login", methods=["POST"])
 def login():
 
-    conn = get_connection()
-
     data = request.get_json()
 
     email = data["email"]
     password = data["password"]
 
+    conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        """
-        SELECT *
+    cursor.execute("""
+        SELECT user_id, name
         FROM users
-        WHERE email = %s
-        AND password = %s
-        """,
-        (email, password)
-    )
+        WHERE email=%s
+        AND password=%s
+    """, (email, password))
 
     user = cursor.fetchone()
 
@@ -585,9 +581,16 @@ def login():
     conn.close()
 
     if user:
-        return "Login Successful"
+        return jsonify({
+            "success": True,
+            "user_id": user[0],
+            "name": user[1]
+        })
 
-    return "Invalid Email or Password"
+    return jsonify({
+        "success": False,
+        "message": "Invalid credentials"
+    }), 401
 
 @app.route("/user-by-email/<email>")
 def get_user_by_email(email):
@@ -615,6 +618,25 @@ def get_user_by_email(email):
     return jsonify({
         "name": "User"
     })
+
+@app.route("/debug-users")
+def debug_users():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name='users'
+    """)
+
+    cols = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(cols)
 
 
 if __name__ == "__main__":
