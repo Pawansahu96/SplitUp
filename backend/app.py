@@ -6,13 +6,15 @@ app = Flask(__name__)
 CORS(app)
 
 # Database Connection
-conn = psycopg2.connect(
-    host="dpg-d8ttkvkm0tmc73fg46hg-a.oregon-postgres.render.com",
-    database="splitup",
-    user="splitup_user",
-    password="D1AjW0BdeZNtstgX0fNGo6mL18vgpNeD",
-    port="5432"
-)
+def get_connection():
+
+    return psycopg2.connect(
+        host="dpg-d8ttkvkm0tmc73fg46hg-a.oregon-postgres.render.com",
+        database="splitup",
+        user="splitup_user",
+        password="D1AjW0BdeZNtstgX0fNGo6mL18vgpNeD",
+        port="5432"
+    )
 
 @app.route("/")
 def home():
@@ -64,6 +66,8 @@ def add_user():
 @app.route("/users")
 def get_users():
 
+    conn = get_connection()
+
     cursor = conn.cursor()
 
     cursor.execute(
@@ -81,9 +85,10 @@ def get_users():
             "email": row[2]
         })
 
-    cursor.close()
+   cursor.close()
+   conn.close()
 
-    return jsonify(users)
+   return jsonify(users)
 
 @app.route("/create-group", methods=["POST"])
 def create_group():
@@ -115,6 +120,7 @@ def create_group():
 @app.route("/groups")
 def get_groups():
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
@@ -132,6 +138,7 @@ def get_groups():
         })
 
     cursor.close()
+    conn.close()
 
     return jsonify(groups)
 
@@ -245,6 +252,7 @@ def add_member():
 @app.route("/expenses")
 def get_expenses():
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -275,6 +283,7 @@ def get_expenses():
            "created_at": str(row[5])
     })
     cursor.close()
+    conn.close()
 
     return jsonify(expenses)
 
@@ -493,6 +502,7 @@ def update_expense(expense_id):
 @app.route("/members")
 def get_members():
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -520,7 +530,11 @@ def get_members():
         })
 
     cursor.close()
+    conn.close()
 
+   
+    app.run(debug=True) 
+    
     return jsonify(result)
 
 @app.route("/settlements")
@@ -549,6 +563,8 @@ def get_settlements():
 @app.route("/login", methods=["POST"])
 def login():
 
+    conn = get_connection()
+
     data = request.get_json()
 
     email = data["email"]
@@ -569,6 +585,7 @@ def login():
     user = cursor.fetchone()
 
     cursor.close()
+    conn.close()
 
     if user:
         return "Login Successful"
@@ -604,4 +621,3 @@ def get_user_by_email(email):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
