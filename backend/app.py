@@ -85,10 +85,10 @@ def get_users():
             "email": row[2]
         })
 
-   cursor.close()
-   conn.close()
+    cursor.close()
+    conn.close()
 
-   return jsonify(users)
+    return jsonify(users)
 
 @app.route("/create-group", methods=["POST"])
 def create_group():
@@ -531,9 +531,6 @@ def get_members():
 
     cursor.close()
     conn.close()
-
-   
-    app.run(debug=True) 
     
     return jsonify(result)
 
@@ -621,3 +618,4 @@ def get_user_by_email(email):
 
 
 if __name__ == "__main__":
+        app.run(debug=True)
