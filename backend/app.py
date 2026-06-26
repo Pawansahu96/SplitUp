@@ -204,6 +204,7 @@ def add_expense():
 
         expense_id = cursor.fetchone()[0]
 
+
         cursor.execute(
             """
             SELECT COUNT(*)
@@ -214,6 +215,8 @@ def add_expense():
         )
 
         member_count = cursor.fetchone()[0]
+        if member_count == 0:
+            return "No members in this group!"
 
         split_amount = float(amount) / member_count
 
