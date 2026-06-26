@@ -183,19 +183,19 @@ const login = async () => {
     }
   );
 
-  const data = await response.text();
+  const data = await response.json();
 
-  if (data === "Login Successful") {
-  alert(data);
+  if (data.success === true) {
+  alert("Login Successful");
 
   localStorage.setItem("isLoggedIn", "true");
   localStorage.setItem("userEmail", loginEmail);
 
   setIsLoggedIn(true);
-  setLoggedInUser(loginEmail);
+  setLoggedInUser(data.name);
 } 
   else {
-    alert(data);
+  alert("Invalid Email or Password");
   }
 };
 
