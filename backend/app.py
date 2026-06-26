@@ -22,12 +22,42 @@ def home():
 
 @app.route("/test-db")
 def test_db():
-    cursor = conn.cursor()
-    cursor.execute("SELECT version();")
-    version = cursor.fetchone()
-    cursor.close()
 
-    return f"Database Connected! {version}"
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT current_database(),
+           current_user,
+           inet_server_addr();
+    """)
+
+    data = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(data)
+
+@app.route("/all-columns")
+def all_columns():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT table_name, column_name
+    FROM information_schema.columns
+    WHERE table_schema='public'
+    ORDER BY table_name, column_name;
+    """)
+
+    data = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(data)
 
 @app.route("/add-user", methods=["POST"])
 def add_user():
