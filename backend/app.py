@@ -340,7 +340,8 @@ def split_expense():
 
 @app.route("/balance")
 def get_balance():
-
+    
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
         """
