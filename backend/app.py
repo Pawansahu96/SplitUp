@@ -595,7 +595,7 @@ def get_settlements():
     conn = get_connection()
     cursor = conn.cursor()
 
-    # Total amount paid by each user
+    # Total paid by each user
     cursor.execute("""
         SELECT
             u.user_id,
@@ -609,7 +609,7 @@ def get_settlements():
 
     paid_rows = cursor.fetchall()
 
-    # Total amount owed by each user
+    # Total owed by each user
     cursor.execute("""
         SELECT
             u.user_id,
@@ -638,19 +638,53 @@ def get_settlements():
     for row in owed_rows:
         owed[row[0]] = float(row[2])
 
-    balances = []
+    creditors = []
+    debtors = []
 
     for user_id in paid:
 
         balance = paid[user_id]["paid"] - owed[user_id]
 
-        balances.append({
-            "user_id": user_id,
-            "name": paid[user_id]["name"],
-            "balance": balance
+        if balance > 0:
+            creditors.append({
+                "name": paid[user_id]["name"],
+                "balance": balance
+            })
+
+        elif balance < 0:
+            debtors.append({
+                "name": paid[user_id]["name"],
+                "balance": -balance
+            })
+
+    settlements = []
+
+    i = 0
+    j = 0
+
+    while i < len(debtors) and j < len(creditors):
+
+        amount = min(
+            debtors[i]["balance"],
+            creditors[j]["balance"]
+        )
+
+        settlements.append({
+            "from_user": debtors[i]["name"],
+            "to_user": creditors[j]["name"],
+            "amount": round(amount, 2)
         })
 
-    return jsonify(balances)
+        debtors[i]["balance"] -= amount
+        creditors[j]["balance"] -= amount
+
+        if debtors[i]["balance"] == 0:
+            i += 1
+
+        if creditors[j]["balance"] == 0:
+            j += 1
+
+    return jsonify(settlements)
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -753,29 +787,6 @@ def test_login():
     conn.close()
 
     return str(row)
-
-@app.route("/debug-expenses")
-def debug_expenses():
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT
-            u.name,
-            SUM(e.amount)
-        FROM expenses e
-        JOIN users u
-        ON e.paid_by = u.user_id
-        GROUP BY u.name
-    """)
-
-    rows = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return jsonify(rows)
 
 
 if __name__ == "__main__":
