@@ -68,6 +68,7 @@ def add_user():
     email = data["email"]
     password = data["password"]
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -89,6 +90,7 @@ def add_user():
 
     finally:
         cursor.close()
+        conn.close()
 
 
 
