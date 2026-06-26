@@ -347,11 +347,11 @@ def get_balance():
         """
         SELECT
             u.name,
-            SUM(es.amount_owed)
-        FROM expense_splits es
-        JOIN users u
+            COALESCE(SUM(es.amount_owed),0)
+        FROM users u
+        LEFT JOIN expense_splits es
         ON es.user_id = u.user_id
-        GROUP BY u.name
+        GROUP BY u.name;
         """
   )
 
@@ -366,6 +366,7 @@ def get_balance():
         })
 
     cursor.close()
+    conn.close()
 
     return jsonify(result)
 
