@@ -129,6 +129,7 @@ def create_group():
 
     group_name = data["group_name"]
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -147,6 +148,7 @@ def create_group():
 
     finally:
         cursor.close()
+        conn.close()
 
 
 @app.route("/groups")
