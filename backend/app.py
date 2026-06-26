@@ -264,6 +264,7 @@ def add_member():
     user_id = data['user_id']
     group_id = data['group_id']
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -286,6 +287,7 @@ def add_member():
 
     finally:
         cursor.close()
+        conn.close()
 
 
 @app.route("/expenses")
