@@ -631,21 +631,35 @@ if (!isLoggedIn) {
 
 <br /><br />
 
-<input
-  type="number"
-  placeholder="Enter User ID"
+<select
   value={memberUserId}
   onChange={(e) => setMemberUserId(e.target.value)}
-/>
+>
+  <option value="">Select User</option>
+
+  {users.map((user) => (
+    <option key={user.user_id} value={user.user_id}>
+      {user.name}
+    </option>
+  ))}
+</select>
 
 <br /><br />
 
-<input
-  type="number"
-  placeholder="Enter Group ID"
+<select
   value={memberGroupId}
   onChange={(e) => setMemberGroupId(e.target.value)}
-/>
+>
+  <option value="">Select Group</option>
+
+  {groups.map((group) => (
+    <option key={group.group_id} value={group.group_id}>
+      {group.group_name}
+    </option>
+  ))}
+</select>
+
+<br /><br />
 
 <br /><br />
 
