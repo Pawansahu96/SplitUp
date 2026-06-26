@@ -754,6 +754,29 @@ def test_login():
 
     return str(row)
 
+@app.route("/debug-expenses")
+def debug_expenses():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            u.name,
+            SUM(e.amount)
+        FROM expenses e
+        JOIN users u
+        ON e.paid_by = u.user_id
+        GROUP BY u.name
+    """)
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(rows)
+
 
 if __name__ == "__main__":
         app.run(debug=True)
