@@ -385,6 +385,7 @@ def get_balance():
 @app.route("/delete-expense/<int:expense_id>", methods=["DELETE"])
 def delete_expense(expense_id):
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -403,10 +404,12 @@ def delete_expense(expense_id):
 
     finally:
         cursor.close()
+        conn.close()
 
 @app.route("/delete-user/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -425,10 +428,12 @@ def delete_user(user_id):
 
     finally:
         cursor.close()
+        conn.close()
 
 @app.route("/delete-group/<int:group_id>", methods=["DELETE"])
 def delete_group(group_id):
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -447,6 +452,7 @@ def delete_group(group_id):
 
     finally:
         cursor.close()
+        conn.close()
 
 @app.route("/update-user/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
@@ -456,6 +462,7 @@ def update_user(user_id):
     name = data["name"]
     email = data["email"]
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -478,6 +485,7 @@ def update_user(user_id):
 
     finally:
         cursor.close()
+        conn.close()
 
 @app.route("/update-group/<int:group_id>", methods=["PUT"])
 def update_group(group_id):
@@ -486,6 +494,7 @@ def update_group(group_id):
 
     group_name = data["group_name"]
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -508,6 +517,7 @@ def update_group(group_id):
 
     finally:
         cursor.close()
+        conn.close()
 
 @app.route("/update-expense/<int:expense_id>", methods=["PUT"])
 def update_expense(expense_id):
@@ -517,6 +527,7 @@ def update_expense(expense_id):
     description = data["description"]
     amount = data["amount"]
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -540,6 +551,7 @@ def update_expense(expense_id):
 
     finally:
         cursor.close()
+        conn.close()
 
 
 @app.route("/members")
@@ -638,6 +650,7 @@ def login():
 @app.route("/user-by-email/<email>")
 def get_user_by_email(email):
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
@@ -652,6 +665,7 @@ def get_user_by_email(email):
     user = cursor.fetchone()
 
     cursor.close()
+    conn.close()
 
     if user:
         return jsonify({
