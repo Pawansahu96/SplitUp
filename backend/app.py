@@ -677,7 +677,7 @@ def test_login():
     cursor.execute("""
         SELECT user_id,name,email,password
         FROM users
-        WHERE email='test@example.com'
+        WHERE email='pawan@gmail.com'
     """)
 
     row = cursor.fetchone()
