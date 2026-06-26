@@ -187,6 +187,7 @@ def add_expense():
     group_id = data["group_id"]
     paid_by = data["paid_by"]
 
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -252,6 +253,7 @@ def add_expense():
 
     finally:
         cursor.close()
+        conn.close()
 
 @app.route('/add-member', methods=['POST'])
 def add_member():
