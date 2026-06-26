@@ -638,6 +638,25 @@ def debug_users():
 
     return jsonify(cols)
 
+@app.route("/test-login")
+def test_login():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT user_id,name,email,password
+        FROM users
+        WHERE email='test@example.com'
+    """)
+
+    row = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return str(row)
+
 
 if __name__ == "__main__":
         app.run(debug=True)
