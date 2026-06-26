@@ -592,25 +592,65 @@ def get_members():
 @app.route("/settlements")
 def get_settlements():
 
-    settlements = [
-        {
-            "from_user": "Pawan2",
-            "to_user": "Pawan",
-            "amount": 2125
-        },
-        {
-            "from_user": "Pawan Kumar",
-            "to_user": "Pawan",
-            "amount": 2125
-        },
-        {
-            "from_user": "aaru",
-            "to_user": "Pawan",
-            "amount": 425
-        }
-    ]
+    conn = get_connection()
+    cursor = conn.cursor()
 
-    return jsonify(settlements)
+    # Total amount paid by each user
+    cursor.execute("""
+        SELECT
+            u.user_id,
+            u.name,
+            COALESCE(SUM(e.amount),0) AS paid
+        FROM users u
+        LEFT JOIN expenses e
+        ON u.user_id = e.paid_by
+        GROUP BY u.user_id, u.name
+    """)
+
+    paid_rows = cursor.fetchall()
+
+    # Total amount owed by each user
+    cursor.execute("""
+        SELECT
+            u.user_id,
+            u.name,
+            COALESCE(SUM(es.amount_owed),0) AS owed
+        FROM users u
+        LEFT JOIN expense_splits es
+        ON u.user_id = es.user_id
+        GROUP BY u.user_id, u.name
+    """)
+
+    owed_rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    paid = {}
+    owed = {}
+
+    for row in paid_rows:
+        paid[row[0]] = {
+            "name": row[1],
+            "paid": float(row[2])
+        }
+
+    for row in owed_rows:
+        owed[row[0]] = float(row[2])
+
+    balances = []
+
+    for user_id in paid:
+
+        balance = paid[user_id]["paid"] - owed[user_id]
+
+        balances.append({
+            "user_id": user_id,
+            "name": paid[user_id]["name"],
+            "balance": balance
+        })
+
+    return jsonify(balances)
 
 @app.route("/login", methods=["POST"])
 def login():
