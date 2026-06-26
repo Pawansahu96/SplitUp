@@ -750,44 +750,6 @@ def get_user_by_email(email):
         "name": "User"
     })
 
-@app.route("/debug-users")
-def debug_users():
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_name='users'
-    """)
-
-    cols = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return jsonify(cols)
-
-@app.route("/test-login")
-def test_login():
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT user_id,name,email,password
-        FROM users
-        WHERE email='pawan@gmail.com'
-    """)
-
-    row = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
-
-    return str(row)
-
 
 if __name__ == "__main__":
         app.run(debug=True)
