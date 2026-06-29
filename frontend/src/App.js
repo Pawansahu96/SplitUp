@@ -76,6 +76,16 @@ const [isLoggedIn, setIsLoggedIn] = useState(
 );
 const [loggedInUser, setLoggedInUser] = useState("");
 
+const [isRegister, setIsRegister] = useState(false);
+
+const [registerName, setRegisterName] = useState("");
+
+const [registerEmail, setRegisterEmail] = useState("");
+
+const [registerPassword, setRegisterPassword] = useState("");
+
+const [confirmPassword, setConfirmPassword] = useState("");
+
 const [groupName, setGroupName] = useState("");
 
 const [description, setDescription] = useState("");
@@ -196,6 +206,58 @@ const login = async () => {
 } 
   else {
   alert("Invalid Email or Password");
+  }
+};
+
+const register = async () => {
+
+  if (registerName.trim() === "") {
+    alert("Please enter your name");
+    return;
+  }
+
+  if (registerEmail.trim() === "") {
+    alert("Please enter your email");
+    return;
+  }
+
+  if (registerPassword.trim() === "") {
+    alert("Please enter your password");
+    return;
+  }
+
+  if (registerPassword !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+
+  const response = await fetch(
+    "https://splitup-backend-1zos.onrender.com/add-user",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: registerName,
+        email: registerEmail,
+        password: registerPassword,
+      }),
+    }
+  );
+
+  const data = await response.text();
+
+  alert(data);
+
+  if (data === "User Added Successfully!") {
+
+    setRegisterName("");
+    setRegisterEmail("");
+    setRegisterPassword("");
+    setConfirmPassword("");
+
+    setIsRegister(false);
   }
 };
 
@@ -441,37 +503,120 @@ const updateGroup = async (groupId) => {
 
   loadGroups();
 };
+
+
 if (!isLoggedIn) {
+
   return (
+
     <div className="container">
 
-      <h1>SplitUp Login</h1>
-      <h2>Expense Sharing App</h2>
+      {!isRegister ? (
 
-      <input
-        type="email"
-        placeholder="Enter Email"
-        value={loginEmail}
-        onChange={(e) => setLoginEmail(e.target.value)}
-      />
+        <>
 
-      <br /><br />
+          <h1>SplitUp Login</h1>
 
-      <input
-        type="password"
-        placeholder="Enter Password"
-        value={loginPassword}
-        onChange={(e) => setLoginPassword(e.target.value)}
-      />
+          <h2>Expense Sharing App</h2>
 
-      <br /><br />
+          <input
+            type="email"
+            placeholder="Enter Email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+          />
 
-      <button onClick={login}>
-        Login
-      </button>
+          <br /><br />
+
+          <input
+            type="password"
+            placeholder="Enter Password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+          />
+
+          <br /><br />
+
+          <button onClick={login}>
+            Login
+          </button>
+
+          <br /><br />
+
+          <p>
+            Don't have an account?
+          </p>
+
+          <button onClick={() => setIsRegister(true)}>
+            Create Account
+          </button>
+
+        </>
+
+      ) : (
+
+        <>
+
+          <h1>Create Account</h1>
+
+          <input
+            type="text"
+            placeholder="Enter Name"
+            value={registerName}
+            onChange={(e) => setRegisterName(e.target.value)}
+          />
+
+          <br /><br />
+
+          <input
+            type="email"
+            placeholder="Enter Email"
+            value={registerEmail}
+            onChange={(e) => setRegisterEmail(e.target.value)}
+          />
+
+          <br /><br />
+
+          <input
+            type="password"
+            placeholder="Enter Password"
+            value={registerPassword}
+            onChange={(e) => setRegisterPassword(e.target.value)}
+          />
+
+          <br /><br />
+
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+
+          <br /><br />
+
+          <button onClick={register}>
+            Register
+          </button>
+
+          <br /><br />
+
+          <p>
+            Already have an account?
+          </p>
+
+          <button onClick={() => setIsRegister(false)}>
+            Login
+          </button>
+
+        </>
+
+      )}
 
     </div>
+
   );
+
 }
 
   return (
@@ -536,186 +681,183 @@ if (!isLoggedIn) {
 <h2 className="section-title">
   📊 Analytics
 </h2>
+ 
 
 <div className="card">
   <Bar data={chartData} />
 </div>
 
-      <input
-  type="text"
-  placeholder="Enter Name"
-  value={name}
-  onChange={(e) => setName(e.target.value)}
-/>
+<div className="dashboard-grid">
+<div className = "card"> 
 
-<br /><br />
+<h2 className = "section-title">
+  📁 Group Management
+</h2>
 
-<input
-  type="email"
-  placeholder="Enter Email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-/>
+  <input
+    type="text"
+    placeholder="Enter Group Name"
+    value={groupName}
+    onChange={(e) => setGroupName(e.target.value)}
+  />
 
-<br /><br />
+  <br /><br />
 
-<input
-  type="password"
-  placeholder="Enter Password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-/>
+  <button className="add-btn" onClick={addGroup}>
+    ➕ Create Group
+  </button>
 
-<br /><br />
-
-<input
-  type="text"
-  placeholder="Enter Group Name"
-  value={groupName}
-  onChange={(e) => setGroupName(e.target.value)}
-/>
-
-<br /><br />
-
-<input
-  type="text"
-  placeholder="Enter Expense Description"
-  value={description}
-  onChange={(e) => setDescription(e.target.value)}
-/>
-
-<br /><br />
-
-<input
-  type="number"
-  placeholder="Enter Amount"
-  value={amount}
-  onChange={(e) => setAmount(e.target.value)}
-/>
-
-<select
-  value={selectedGroup}
-  onChange={(e) => setSelectedGroup(e.target.value)}
->
-  <option value="">Select Group</option>
-
-  {groups.map((group) => (
-    <option
-      key={group.group_id}
-      value={group.group_id}
-    >
-      {group.group_name}
-    </option>
-  ))}
-</select>
-
-<br /><br />
-
-<select
-  value={paidBy}
-  onChange={(e) => setPaidBy(e.target.value)}
->
-  <option value="">Select User</option>
-
-  {users.map((user) => (
-    <option
-      key={user.user_id}
-      value={user.user_id}
-    >
-      {user.name}
-    </option>
-  ))}
-</select>
-
-<br /><br />
-
-<br /><br />
-
-<select
-  value={memberUserId}
-  onChange={(e) => setMemberUserId(e.target.value)}
->
-  <option value="">Select User</option>
-
-  {users.map((user) => (
-    <option key={user.user_id} value={user.user_id}>
-      {user.name}
-    </option>
-  ))}
-</select>
-
-<br /><br />
-
-<select
-  value={memberGroupId}
-  onChange={(e) => setMemberGroupId(e.target.value)}
->
-  <option value="">Select Group</option>
-
-  {groups.map((group) => (
-    <option key={group.group_id} value={group.group_id}>
-      {group.group_name}
-    </option>
-  ))}
-</select>
-
-<br /><br />
-
-<br /><br />
-
-<button className="add-btn" onClick={addUser}>
-  Add User
-</button>
-
-<br /><br />
-
-<button className="add-btn" onClick={addGroup}>
-  Add Group
-</button>
-
-
-<br /><br />
-
-<button className="add-btn" onClick={addExpense}>
-  Add Expense
-</button>
-<br /><br />
-
-<button
-  className="add-btn"
-  onClick={addMember}
->
-  Add Member
-</button>
-
-<br /><br />
-
-
-<button onClick={loadBalance}>
-  View Balance
-</button>
-
-<br /><br />
-
-<button onClick={loadSettlements}>
-  View Settlements
-</button>
-
-<br /><br />
-
-<div>
-  {balance.map((item, index) => (
-    <div className="card" key={index}>
-      <h3>{item.user_name}</h3>
-
-      <p>
-        <strong>Total Owed:</strong> ₹{item.total_owed}
-      </p>
-    </div>
-  ))}
 </div>
 
-      <br /><br />
+
+<div className="card">
+
+  <h2 className = "section-title">
+    💳 Expense Management
+  </h2>
+
+  <input
+    type="text"
+    placeholder="Enter Expense Description"
+    value={description}
+    onChange={(e) => setDescription(e.target.value)}
+  />
+
+  <br /><br />
+
+  <input
+    type="number"
+    placeholder="Enter Amount"
+    value={amount}
+    onChange={(e) => setAmount(e.target.value)}
+  />
+
+  <br /><br />
+
+  <select
+    value={selectedGroup}
+    onChange={(e) => setSelectedGroup(e.target.value)}
+  >
+    <option value="">Select Group</option>
+
+    {groups.map((group) => (
+      <option
+        key={group.group_id}
+        value={group.group_id}
+      >
+        {group.group_name}
+      </option>
+    ))}
+  </select>
+
+  <br /><br />
+
+  <select
+    value={paidBy}
+    onChange={(e) => setPaidBy(e.target.value)}
+  >
+    <option value="">Select User</option>
+
+    {users.map((user) => (
+      <option
+        key={user.user_id}
+        value={user.user_id}
+      >
+        {user.name}
+      </option>
+    ))}
+  </select>
+
+  <br /><br />
+
+  <button
+    className="add-btn"
+    onClick={addExpense}
+  >
+    💳 Add Expense
+  </button>
+
+</div>
+
+
+<div className="card">
+
+  <h2 className="section-title">
+    👥 Member Management
+  </h2>
+
+  <select
+    value={memberUserId}
+    onChange={(e) => setMemberUserId(e.target.value)}
+  >
+    <option value="">Select User</option>
+
+    {users.map((user) => (
+      <option
+        key={user.user_id}
+        value={user.user_id}
+      >
+        {user.name}
+      </option>
+    ))}
+  </select>
+
+  <br /><br />
+
+  <select
+    value={memberGroupId}
+    onChange={(e) => setMemberGroupId(e.target.value)}
+  >
+    <option value="">Select Group</option>
+
+    {groups.map((group) => (
+      <option
+        key={group.group_id}
+        value={group.group_id}
+      >
+        {group.group_name}
+      </option>
+    ))}
+  </select>
+
+  <br /><br />
+
+  <button
+    className="add-btn"
+    onClick={addMember}
+  >
+    👥 Add Member
+  </button>
+
+</div>
+</div>
+
+<br />
+
+<div className="card">
+
+  <h2 className="section-title">
+    💰 Balance & Settlement
+  </h2>
+
+  <button
+    className="add-btn"
+    onClick={loadBalance}
+  >
+    View Balance
+  </button>
+
+  <br /><br />
+
+  <button
+    className="add-btn"
+    onClick={loadSettlements}
+  >
+    View Settlements
+  </button>
+
+</div>
+
 
 <h2 className="section-title">
   👤 Users

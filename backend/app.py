@@ -750,6 +750,36 @@ def get_user_by_email(email):
         "name": "User"
     })
 
+@app.route("/my-groups/<email>")
+def my_groups(email):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT g.group_id, g.group_name
+        FROM groups g
+        JOIN group_members gm
+            ON g.group_id = gm.group_id
+        JOIN users u
+            ON gm.user_id = u.user_id
+        WHERE u.email = %s
+    """, (email,))
+
+    groups = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    result = []
+
+    for group in groups:
+        result.append({
+            "group_id": group[0],
+            "group_name": group[1]
+        })
+
+    return jsonify(result)
 
 if __name__ == "__main__":
         app.run(debug=True)
