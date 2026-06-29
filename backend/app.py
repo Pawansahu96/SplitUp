@@ -757,10 +757,10 @@ def my_groups(email):
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT g.group_id, g.group_name
-        FROM groups g
+        SELECT gt.group_id, gt.group_name
+        FROM groups_table gt
         JOIN group_members gm
-            ON g.group_id = gm.group_id
+            ON gt.group_id = gm.group_id
         JOIN users u
             ON gm.user_id = u.user_id
         WHERE u.email = %s
