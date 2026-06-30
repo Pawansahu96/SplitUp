@@ -941,5 +941,72 @@ def my_balance(email):
 
     return jsonify([])
 
+@app.route("/my-dashboard/<email>")
+def my_dashboard(email):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+        SELECT
+
+        (
+            SELECT COUNT(*)
+            FROM group_members gm
+            JOIN users u
+            ON gm.user_id=u.user_id
+            WHERE u.email=%s
+        ) AS total_groups,
+
+        (
+            SELECT COUNT(*)
+            FROM expenses e
+            JOIN group_members gm
+            ON e.group_id=gm.group_id
+            JOIN users u
+            ON gm.user_id=u.user_id
+            WHERE u.email=%s
+        ) AS total_expenses,
+
+        (
+            SELECT COUNT(*)
+            FROM group_members gm
+            JOIN users u
+            ON gm.user_id=u.user_id
+            WHERE gm.group_id IN
+            (
+                SELECT gm2.group_id
+                FROM group_members gm2
+                JOIN users u2
+                ON gm2.user_id=u2.user_id
+                WHERE u2.email=%s
+            )
+        ) AS total_members,
+
+        (
+            SELECT COALESCE(SUM(e.amount),0)
+            FROM expenses e
+            JOIN group_members gm
+            ON e.group_id=gm.group_id
+            JOIN users u
+            ON gm.user_id=u.user_id
+            WHERE u.email=%s
+        ) AS total_amount
+
+    """,(email,email,email,email))
+
+    row=cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "total_groups":row[0],
+        "total_expenses":row[1],
+        "total_members":row[2],
+        "total_amount":float(row[3])
+    })
+
 if __name__ == "__main__":
         app.run(debug=True)

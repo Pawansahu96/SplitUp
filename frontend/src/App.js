@@ -105,14 +105,14 @@ useEffect(() => {
     loadMyGroups();
     loadMyExpenses();
     loadMyMembers();
+    loadMyBalance();
   } else {
     loadGroups();
     loadExpenses();
     loadMembers();
+    loadBalance();
 
   }
-
-  loadBalance();
   loadSettlements();
 
 }, []);
@@ -229,6 +229,7 @@ const login = async () => {
   loadMyGroups();
   loadMyExpenses();
   loadMyMembers();
+  loadMyBalance();
 } 
   else {
   alert("Invalid Email or Password");
@@ -414,6 +415,19 @@ const loadBalance = async () => {
   const response = await fetch("https://splitup-backend-1zos.onrender.com/balance");
   const data = await response.json();
   setBalance(data);
+};
+const loadMyBalance = async () => {
+
+  const email = localStorage.getItem("userEmail");
+
+  const response = await fetch(
+    `https://splitup-backend-1zos.onrender.com/my-balance/${email}`
+  );
+
+  const data = await response.json();
+
+  setBalance(data);
+
 };
 
 const loadSettlements = async () => {
