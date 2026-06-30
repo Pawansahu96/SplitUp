@@ -65,6 +65,12 @@ const chartData = {
 };
 const [balance, setBalance] = useState([]);
 const [settlements, setSettlements] = useState([]);
+const [dashboardStats, setDashboardStats] = useState({
+  total_groups: 0,
+  total_expenses: 0,
+  total_members: 0,
+  total_amount: 0,
+});
 
 const [name, setName] = useState("");
 const [email, setEmail] = useState("");
@@ -106,10 +112,11 @@ useEffect(() => {
     loadMyExpenses();
     loadMyMembers();
     loadMyBalance();
+    loadMyDashboard();
   } else {
     loadGroups();
     loadExpenses();
-    loadMembers();
+    loadMembers(); 
     loadBalance();
 
   }
@@ -230,6 +237,7 @@ const login = async () => {
   loadMyExpenses();
   loadMyMembers();
   loadMyBalance();
+  loadMyDashboard();
 } 
   else {
   alert("Invalid Email or Password");
@@ -427,6 +435,20 @@ const loadMyBalance = async () => {
   const data = await response.json();
 
   setBalance(data);
+
+};
+
+const loadMyDashboard = async () => {
+
+  const email = localStorage.getItem("userEmail");
+
+  const response = await fetch(
+    `https://splitup-backend-1zos.onrender.com/my-dashboard/${email}`
+  );
+
+  const data = await response.json();
+
+  setDashboardStats(data);
 
 };
 
@@ -724,22 +746,22 @@ if (!isLoggedIn) {
 
   <div className="stat-card">
     <h3>Total Groups</h3>
-    <h2>{totalGroups}</h2>
+    <h2>{dashboardStats.total_groups}</h2>
   </div>
 
   <div className="stat-card">
     <h3>Total Expenses</h3>
-    <h2>{totalExpenses}</h2>
+    <h2>{dashboardStats.total_expenses}</h2>
   </div>
 
   <div className="stat-card">
     <h3>Total Amount</h3>
-    <h2>₹{totalAmount}</h2>
+    <h2>₹{dashboardStats.total_amount}</h2>
   </div>
 
 <div className="stat-card">
   <h3>Total Members</h3>
-  <h2>{totalMembers}</h2>
+  <h2>{dashboardStats.total_members}</h2>
 </div>
 
 </div>
