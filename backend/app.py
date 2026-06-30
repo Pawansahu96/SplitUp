@@ -886,5 +886,60 @@ def my_members(email):
 
     return jsonify(result)
 
+@app.route("/my-balance/<email>")
+def my_balance(email):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            u.name,
+            COALESCE(paid.total_paid,0) -
+            COALESCE(owed.total_owed,0) AS balance
+
+        FROM users u
+
+        LEFT JOIN (
+
+            SELECT
+                paid_by,
+                SUM(amount) AS total_paid
+            FROM expenses
+            GROUP BY paid_by
+
+        ) paid
+        ON u.user_id = paid.paid_by
+
+        LEFT JOIN (
+
+            SELECT
+                user_id,
+                SUM(amount_owed) AS total_owed
+            FROM expense_splits
+            GROUP BY user_id
+
+        ) owed
+        ON u.user_id = owed.user_id
+
+        WHERE u.email = %s
+    """, (email,))
+
+    row = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if row:
+
+        return jsonify([
+            {
+                "user_name": row[0],
+                "total_owed": row[1]
+            }
+        ])
+
+    return jsonify([])
+
 if __name__ == "__main__":
         app.run(debug=True)

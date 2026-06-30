@@ -104,14 +104,14 @@ useEffect(() => {
   if (localStorage.getItem("isLoggedIn") === "true") {
     loadMyGroups();
     loadMyExpenses();
+    loadMyMembers();
   } else {
     loadGroups();
     loadExpenses();
+    loadMembers();
 
   }
 
- 
-  loadMembers();
   loadBalance();
   loadSettlements();
 
@@ -133,7 +133,19 @@ const loadMembers = async () => {
 
   setMembers(data);
 };
+const loadMyMembers = async () => {
 
+  const email = localStorage.getItem("userEmail");
+
+  const response = await fetch(
+    `https://splitup-backend-1zos.onrender.com/my-members/${email}`
+  );
+
+  const data = await response.json();
+
+  setMembers(data);
+
+};
 
 
 
@@ -216,6 +228,7 @@ const login = async () => {
   setLoggedInUser(data.name);
   loadMyGroups();
   loadMyExpenses();
+  loadMyMembers();
 } 
   else {
   alert("Invalid Email or Password");
