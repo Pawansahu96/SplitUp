@@ -834,5 +834,57 @@ def my_expenses(email):
 
     return jsonify(result)
 
+@app.route("/my-members/<email>")
+def my_members(email):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            gm.member_id,
+            u.name,
+            gt.group_name
+
+        FROM group_members gm
+
+        JOIN users u
+            ON gm.user_id = u.user_id
+
+        JOIN groups_table gt
+            ON gm.group_id = gt.group_id
+
+        WHERE gm.group_id IN (
+
+            SELECT gm2.group_id
+
+            FROM group_members gm2
+
+            JOIN users u2
+                ON gm2.user_id = u2.user_id
+
+            WHERE u2.email = %s
+        )
+
+        ORDER BY gt.group_name, u.name
+
+    """, (email,))
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    result = []
+
+    for row in rows:
+        result.append({
+            "member_id": row[0],
+            "user_name": row[1],
+            "group_name": row[2]
+        })
+
+    return jsonify(result)
+
 if __name__ == "__main__":
         app.run(debug=True)
