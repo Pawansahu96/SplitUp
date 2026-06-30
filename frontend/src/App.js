@@ -97,13 +97,21 @@ const [memberUserId, setMemberUserId] = useState("");
 const [memberGroupId, setMemberGroupId] = useState("");
 
 useEffect(() => {
-  loadLoggedInUser();  
+
+  loadLoggedInUser();
   loadUsers();
-  loadGroups();
+
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    loadMyGroups();
+  } else {
+    loadGroups();
+  }
+
   loadExpenses();
   loadMembers();
   loadBalance();
   loadSettlements();
+
 }, []);
 
   const loadUsers = async () => {
@@ -203,6 +211,7 @@ const login = async () => {
 
   setIsLoggedIn(true);
   setLoggedInUser(data.name);
+  loadMyGroups();
 } 
   else {
   alert("Invalid Email or Password");
@@ -348,6 +357,19 @@ const addMember = async () => {
 const loadGroups = async () => {
   const response = await fetch("https://splitup-backend-1zos.onrender.com/groups");
   const data = await response.json();
+  setGroups(data);
+};
+
+const loadMyGroups = async () => {
+
+  const email = localStorage.getItem("userEmail");
+
+  const response = await fetch(
+    `https://splitup-backend-1zos.onrender.com/my-groups/${email}`
+  );
+
+  const data = await response.json();
+
   setGroups(data);
 };
 
